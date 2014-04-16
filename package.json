@@ -1,0 +1,12 @@
+{
+  "name": "node-js-scanner",
+  "version": "0.0.3",
+  "description": "node js scanner poc",
+  "dependencies": {
+    "express": "~3.4.x"
+  },
+  "engines": {
+    "node": "0.10.x",
+    "npm": "1.3.x"
+  }
+}
