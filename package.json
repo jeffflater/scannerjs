@@ -5,6 +5,7 @@
   "dependencies": {
     "easyimage": "^1.0.0",
     "express": "3.4.4",
+    "img-to-64": "^0.1.1",
     "jsesc": "^0.4.3",
     "open": "0.0.5",
     "socket.io": "0.9.x",

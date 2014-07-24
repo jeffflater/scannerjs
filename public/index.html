@@ -7,6 +7,7 @@
         var socket = socket = io.connect();
 
         socket.on('document', function(document) {
+            alert(document.image);
             $('#documents').append('<li>' + document.fileName + ' - ' + document.dateTimeSent + '</li>');
         });
     </script>

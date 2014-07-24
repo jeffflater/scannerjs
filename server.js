@@ -6,11 +6,13 @@ var express = require('express'),
     path = require('path'),
     io = require('socket.io'),
     fs = require('fs'),
+    i64 = require('img-to-64'),
     easyimage = require('easyimage'),
     jsesc = require('jsesc'),
     xml2js = require('xml2js');
 
 var app = express();
+var tempDirectory = 'c:\\tmp'
 
 var documentModel = function (fileName, image, dateTimeSent, isSent) {
     this.fileName = fileName;
@@ -44,43 +46,44 @@ server.listen(app.get('port'), function(){
     console.log('Express server listening on port ' + app.get('port'));
 });
 
-//Sock.io - Real-time Annotations
+//Sock.io - Real-time Communication
 var socketServer = io.listen(server);
 
 //File system watcher...
-fs.watch('c:\\tmp', function(event, targetfile){
-
-    if (targetfile != null) {
+fs.watch(tempDirectory, function(event, targetFile){
+    if (targetFile != null) {
         console.log('Found Target File!');
 
-        var fileName = targetfile.toString();
+        var fileName = targetFile.toString();
 
-        findDocumentByFileName(fileName, function(foundDocument){
-
-            console.log('foundDocument: '+foundDocument);
-
-            //Add document to QUE if NOT found...
-            if (!foundDocument) {
-                var document = new documentModel();
-                document.fileName = fileName;
-                document.image = null; //todo: figure out how to transfer image
-                document.dateTimeSent = new Date();
-                document.isSent = false;
-
-                documentQue.push(document);
-            }
-
-            //Send documents that have not been sent...
-            for (var document in documentQue) {
-                if (documentQue[document].isSent == false) {
-                    socketServer.sockets.emit('document', documentQue[document]);
-                    documentQue[document].isSent = true;
+        getBase64StringFromImage(fileName, function(b64ImageString){
+            findDocumentByFileName(fileName, function(foundDocument){
+                //Add document to QUE if NOT found...
+                if (!foundDocument) {
+                    var document = new documentModel();
+                    document.fileName = fileName;
+                    document.image = b64ImageString;
+                    document.dateTimeSent = new Date();
+                    document.isSent = false;
+                    documentQue.push(document);
                 }
-            }
-
+            });
         });
     }
 });
+
+//Monitor and transfer QUE'd documents
+setInterval(transferDocumentsInQue, 1000);
+
+function transferDocumentsInQue() {
+    //Send documents that have not been sent...
+    for (var document in documentQue) {
+        if (documentQue[document].isSent == false) {
+            documentQue[document].isSent = true;
+            socketServer.sockets.emit('document', documentQue[document]);
+        }
+    }
+}
 
 function findDocumentByFileName(fileName, callback) {
     var foundDocument = false;
@@ -93,4 +96,19 @@ function findDocumentByFileName(fileName, callback) {
         }
     }
     callback(foundDocument);
+}
+
+function getBase64StringFromImage(fileName, callback){
+    i64.getImageStrings({
+        files: [tempDirectory+'\\'+fileName],
+        css: true
+    }, function(err, b64Strings){
+        if (err) {
+            console.log('err: '+err);
+        }
+        b64Strings.forEach(function(b64ImageString){
+            console.log('b64ImageString: '+b64ImageString);
+            callback(b64ImageString);
+        });
+    });
 }
