@@ -3,7 +3,13 @@
   "version": "0.0.3",
   "description": "node js scanner poc",
   "dependencies": {
-    "express": "~3.4.x"
+    "easyimage": "^1.0.0",
+    "express": "3.4.4",
+    "jsesc": "^0.4.3",
+    "open": "0.0.5",
+    "socket.io": "0.9.x",
+    "stylus": "^0.47.3",
+    "xml2js": "^0.4.4"
   },
   "engines": {
     "node": "0.10.x",
