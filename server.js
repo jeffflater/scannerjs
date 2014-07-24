@@ -39,17 +39,9 @@ server.listen(app.get('port'), function(){
 //Sock.io - Real-time Annotations
 var socketServer = io.listen(server);
 
-// Send current time to all connected clients
-function sendTime() {
-    socketServer.sockets.emit('time', { time: new Date().toJSON() });
-}
-
-// Send current time every 10 secs
-setInterval(sendTime, 10000);
-
-// Emit welcome message on connection
-socketServer.sockets.on('connection', function(socket) {
-    socket.emit('welcome', { message: 'Welcome!' });
-
-    socket.on('i am client', console.log);
+//File system watcher...
+fs.watch('c:\\tmp', function(event, targetfile){
+    var file = targetfile.toString();
+    console.log('Sending file: '+file);
+    socketServer.sockets.emit('document', { name: file });
 });

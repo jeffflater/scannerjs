@@ -6,23 +6,15 @@
     <script>
         var socket = socket = io.connect();
 
-        socket.on('welcome', function(data) {
-            $('#messages').append('<li>' + data.message + '</li>');
-
-            socket.emit('i am client', {data: 'foo!'});
+        socket.on('document', function(document) {
+            $('#documents').append('<li>' + document.name + '</li>');
         });
-        socket.on('time', function(data) {
-            console.log(data);
-            $('#messages').append('<li>' + data.time + '</li>');
-        });
-        socket.on('error', function() { console.error(arguments) });
-        socket.on('message', function() { console.log(arguments) });
     </script>
 </head>
 <body>
 
 Test Socket IO page!
 
-<ul id='messages'></ul>
+<ul id='documents'></ul>
 </body>
 </html>
