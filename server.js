@@ -68,9 +68,6 @@ fs.watch(tempDirectory, function(event, targetFile){
                     var info = mime.lookup(tempDirectory+'\\'+fileName);
                     console.log("info-test:", info);
                 }
-
-                //mammoth.convertToHtml({path: ""});
-
             });
         });
     }
