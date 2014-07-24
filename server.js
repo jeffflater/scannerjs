@@ -105,6 +105,7 @@ function getBase64StringFromImage(fileName, callback){
     }, function(err, b64Strings){
         if (err) {
             console.log('err: '+err);
+            callback(null);
         }
         b64Strings.forEach(function(b64ImageString){
             console.log('b64ImageString: '+b64ImageString);

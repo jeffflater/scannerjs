@@ -7,8 +7,10 @@
         var socket = socket = io.connect();
 
         socket.on('document', function(document) {
-            alert(document.image);
             $('#documents').append('<li>' + document.fileName + ' - ' + document.dateTimeSent + '</li>');
+            if (document.image != null) {
+                $('#latestImage').attr('src', document.image);
+            }
         });
     </script>
 </head>
@@ -19,5 +21,9 @@
 
 <h2>Received Documents</h2>
 <ul id='documents'></ul>
+
+<h2>Latest Image Received</h2>
+
+<img id="latestImage" />
 </body>
 </html>
