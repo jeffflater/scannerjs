@@ -1,16 +1,47 @@
 <!doctype html>
 <html>
 <head>
+    <title>NodeJS Scanner Demo</title>
+    <meta name="viewport" content="width=620, user-scalable=no">
+
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
+
+    <link href="css/angular-carousel.css" rel="stylesheet" type="text/css" />
+    <link href='http://fonts.googleapis.com/css?family=Droid+Sans:400,700' rel='stylesheet' type='text/css'>
+
     <script src='//code.jquery.com/jquery-1.7.2.min.js'></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
+
+
     <script>
         var socket = socket = io.connect();
+        var loadedDocuments = 0;
 
         socket.on('document', function(document) {
-            $('#documents').append('<li>' + document.fileName + ' - ' + document.dateTimeSent + '</li>');
-            if (document.image != null) {
-                $('#latestImage').attr('src', document.image);
+
+            var carouselClass;
+            if (loadedDocuments == 0) {
+                carouselClass = 'item active';
+            }else{
+                carouselClass = 'item';
             }
+
+            var carouselItem = '<div class="' + carouselClass + '">' +
+                    '<img src="' + document.image + '" alt="" width="500">' +
+                    '<div class="carousel-caption" style="color:black;">' +
+                    'File Name: ' + document.fileName + '<br />' +
+                    'Date Sent: ' + document.dateTimeSent +
+                    '</div>' +
+                    '</div>';
+            $('.carousel-inner').append(carouselItem);
+            loadedDocuments = loadedDocuments+1;
+
+            $("#carousel-example-generic").carousel("pause").removeData();
+            $("#carousel-example-generic").carousel(0);
+
+            var documentPreviewText = 'Documents Loaded: '+loadedDocuments;
+            $('#documentPreviewDetails').html(documentPreviewText);
         });
     </script>
 </head>
@@ -19,11 +50,33 @@
 <h2>NodeJS Scanner</h2>
 <p>Create a local node instance that will interface with an scanner utility or folder directory and transfer the scanned documents in real-time to the web server and displayed on a web page.</p>
 
-<h2>Received Documents</h2>
-<ul id='documents'></ul>
+<h2>Document Preview</h2>
 
-<h2>Latest Image Received</h2>
+<div id="documentPreviewDetails">
+</div>
 
-<img id="latestImage" />
+<div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+    <!-- Indicators -->
+    <ol class="carousel-indicators">
+        <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
+        <li data-target="#carousel-example-generic" data-slide-to="1"></li>
+        <li data-target="#carousel-example-generic" data-slide-to="2"></li>
+    </ol>
+
+    <!-- Wrapper for slides -->
+    <div class="carousel-inner">
+    </div>
+
+    <!-- Controls -->
+    <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
+        <span class="glyphicon glyphicon-chevron-left"></span>
+    </a>
+    <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
+        <span class="glyphicon glyphicon-chevron-right"></span>
+    </a>
+</div>
+
 </body>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.9/angular.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.9/angular-touch.min.js"></script>
 </html>
