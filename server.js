@@ -7,9 +7,7 @@ var express = require('express'),
     io = require('socket.io'),
     fs = require('fs'),
     i64 = require('img-to-64'),
-    easyimage = require('easyimage'),
-    jsesc = require('jsesc'),
-    xml2js = require('xml2js');
+    mime = require('mime');
 
 var app = express();
 var tempDirectory = 'c:\\tmp'
@@ -66,6 +64,9 @@ fs.watch(tempDirectory, function(event, targetFile){
                     document.dateTimeSent = new Date();
                     document.isSent = false;
                     documentQue.push(document);
+
+                    var info = mime.lookup(tempDirectory+'\\'+fileName);
+                    console.log("info-test:", info);
                 }
             });
         });
@@ -99,17 +100,25 @@ function findDocumentByFileName(fileName, callback) {
 }
 
 function getBase64StringFromImage(fileName, callback){
-    i64.getImageStrings({
-        files: [tempDirectory+'\\'+fileName],
-        css: true
-    }, function(err, b64Strings){
-        if (err) {
-            console.log('err: '+err);
-            callback(null);
-        }
-        b64Strings.forEach(function(b64ImageString){
-            console.log('b64ImageString: '+b64ImageString);
-            callback(b64ImageString);
+    var file = tempDirectory+'\\'+fileName;
+    var mimeType = mime.lookup(file);
+    var mimeTypeString = mimeType.toString();
+
+    if (mimeTypeString.indexOf('image') > -1) {
+        i64.getImageStrings({
+            files: [file],
+            css: true
+        }, function(err, b64Strings){
+            if (err) {
+                console.log('err: '+err);
+                callback(null);
+            }
+            b64Strings.forEach(function(b64ImageString){
+                console.log('b64ImageString: '+b64ImageString);
+                callback(b64ImageString);
+            });
         });
-    });
+    }else{
+        callback(null);
+    }
 }
