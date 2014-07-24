@@ -7,14 +7,16 @@
         var socket = socket = io.connect();
 
         socket.on('document', function(document) {
-            $('#documents').append('<li>' + document.name + '</li>');
+            $('#documents').append('<li>' + document.fileName + ' - ' + document.dateTimeSent + '</li>');
         });
     </script>
 </head>
 <body>
 
-Test Socket IO page!
+<h2>NodeJS Scanner</h2>
+<p>Create a local node instance that will interface with an scanner utility or folder directory and transfer the scanned documents in real-time to the web server and displayed on a web page.</p>
 
+<h2>Received Documents</h2>
 <ul id='documents'></ul>
 </body>
 </html>
